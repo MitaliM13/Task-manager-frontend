@@ -2,16 +2,21 @@
 import { useState } from "react";
 import axios from "axios";
 
-export default function LoginPage() {
+export default function LoginPage({onLoginSuccess}) {
     const [email, setEmail]  = useState('');
     const [password, setPassword] = useState('')
 
     const handleLogin = async() => {
         try {
             const res = await axios.post('http://localhost:5000/api/auth/login', { email, password })
-
+            const user = res.data.user
             localStorage.setItem('token', res.data.token)
             alert('Login Successful')
+
+            onLoginSuccess(user)
+            console.log("LoggedIn User",user)
+            setEmail('')
+            setPassword('')
         } catch (error) {
             alert('Login Failed!')
         }

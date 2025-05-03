@@ -9,8 +9,9 @@ export default function RegisterPage({onRegisterSuccess} ) {
   const handleSubmit = async () => {
     try {
       const res = await axios.post('http://localhost:5000/api/auth/register', form);
-      alert(res.data.message);
+      alert(res.data.message || "Registration Success!");
       onRegisterSuccess();
+      setForm({username: '', email: '', password: ''})
     } catch (error) {
       alert(error.response?.data?.error || 'Registration Failed');
     }
