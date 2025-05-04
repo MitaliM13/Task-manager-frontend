@@ -9,12 +9,11 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
     status: 'Pending',
     priority: 'Medium',
     dueDate: '',
-  })
+  });
 
   useEffect(() => {
     if (editingTask) {
-      const { title, description, status, priority, dueDate } = editingTask
-      setTask({ title, description, status, priority, dueDate })
+      setTask(editingTask);
     } else {
       setTask({
         title: '',
@@ -22,44 +21,47 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
         status: 'Pending',
         priority: 'Medium',
         dueDate: '',
-      })
+      });
     }
-  }, [editingTask])
+  }, [editingTask]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const payload = { ...task }
+    try {
+      let res, data;
 
-    console.log("Submitting:", editingTask ? payload : { ...payload, createdBy: userId })
+      if (editingTask) {
+        res = await fetch(`http://localhost:5000/api/tasks/${editingTask._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(task),
+        });
+        data = await res.json();
+        onTaskUpdated(data);
+        setEditingTask(null);
+      } else {
+        res = await fetch(`http://localhost:5000/api/tasks`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...task, createdBy: userId }),
+        });
+        data = await res.json();
+        onTaskAdded(data);
+      }
 
-    if (editingTask) {
-      const res = await fetch(`http://localhost:5000/api/tasks/${editingTask._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-      const updated = await res.json()
-      onTaskUpdated(updated)
-      setEditingTask(null)
-    } else {
-      const res = await fetch(`http://localhost:5000/api/tasks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, createdBy: userId }),
-      })
-      const newTask = await res.json()
-      onTaskAdded(newTask)
+      setTask({
+        title: '',
+        description: '',
+        status: 'Pending',
+        priority: 'Medium',
+        dueDate: '',
+      });
+
+    } catch (err) {
+      console.error("Task submission error:", err);
     }
-
-    setTask({
-      title: '',
-      description: '',
-      status: 'Pending',
-      priority: 'Medium',
-      dueDate: '',
-    })
-  }
+  };
 
   return (
     <div className="mt-6 border p-4 rounded-xl bg-gray-100">
@@ -96,7 +98,6 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
         >
           <option value="">Select Status</option>
           <option value="Pending">Pending</option>
-          <option value="In Progress">In Progress</option>
           <option value="Completed">Completed</option>
         </select>
         <input
@@ -121,5 +122,5 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
         </div>
       </form>
     </div>
-  )
+  );
 }

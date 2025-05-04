@@ -8,7 +8,7 @@ const API = "http://localhost:5000/api/tasks"
 export default function DashboardPage({ user, onLogout }) {
   const [tasks, setTasks] = useState([])
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusfilter] = useState("")
+  const [statusFilter, setStatusFilter] = useState("")
   const [priorityFilter, setPriorityFilter] = useState("")
   const [dueBefore, setDueBefore] = useState("")
   const [editingTask, setEditingTask] = useState(null)
@@ -18,39 +18,66 @@ export default function DashboardPage({ user, onLogout }) {
   }, [])
 
   const fetchTasks = async () => {
-    const res = await fetch(API)
-    const data = await res.json()
-    setTasks(data)
+    try {
+      const res = await fetch(API)
+      const data = await res.json()
+      setTasks(data)
+    } catch (err) {
+      console.error("Error fetching tasks:", err)
+    }
   }
 
   const handleTaskAdded = (newTask) => {
-    setTasks([...tasks, newTask])
+    setTasks((prev) => [...prev, newTask])
   }
 
-  const handleTaskUpdated = (updatedTask) => {
-    setTasks(tasks.map(task => task._id === updatedTask._id ? updatedTask : task))
+  const handleTaskUpdated = async (updatedTask) => {
+    try {
+      const res = await fetch(`${API}/${updatedTask._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTask),
+      })
+      const data = await res.json()
+      setTasks((prev) => prev.map((t) => (t._id === data._id ? data : t)))
+      setEditingTask(null)
+    } catch (err) {
+      console.error("Update error:", err)
+    }
   }
 
   const handleDelete = async (id) => {
-    await fetch(`${API}/${id}`, { method: 'DELETE' })
-    setTasks(tasks.filter(task => task._id !== id))
+    try {
+      await fetch(`${API}/${id}`, { method: "DELETE" })
+      setTasks((prev) => prev.filter((task) => task._id !== id))
+    } catch (err) {
+      console.error("Delete error:", err)
+    }
   }
 
   const handleSearch = async () => {
-    const res = await fetch(`${API}/search?q=${searchQuery}`)
-    const data = await res.json()
-    setTasks(data)
+    try {
+      const res = await fetch(`${API}/search?q=${searchQuery}`)
+      const data = await res.json()
+      setTasks(data)
+    } catch (err) {
+      console.error("Search error:", err)
+    }
   }
 
   const handleFilter = async () => {
-    const queryParams = new URLSearchParams()
-    if (statusFilter) queryParams.append("status", statusFilter)
-    if (priorityFilter) queryParams.append("priority", priorityFilter)
-    if (dueBefore) queryParams.append("dueBefore", dueBefore)
+    try {
+      const queryParams = new URLSearchParams()
+      if (statusFilter) queryParams.append("status", statusFilter)
+      if (priorityFilter) queryParams.append("priority", priorityFilter)
+      if (dueBefore) queryParams.append("dueBefore", dueBefore)
 
-    const res = await fetch(`${API}/filter?${queryParams.toString()}`)
-    const data = await res.json()
-    setTasks(data)
+      const res = await fetch(`${API}/filter?${queryParams}`)
+      const data = await res.json()
+      setTasks(data)
+    } catch (err) {
+      console.error("Filter error:", err)
+    }
   }
 
   return (
@@ -78,7 +105,7 @@ export default function DashboardPage({ user, onLogout }) {
       </div>
 
       <div className="my-2 space-x-2">
-        <select onChange={(e) => setStatusfilter(e.target.value)} className="input">
+        <select onChange={(e) => setStatusFilter(e.target.value)} className="input">
           <option value="">Status</option>
           <option value="Pending">Pending</option>
           <option value="Completed">Completed</option>
@@ -110,20 +137,22 @@ export default function DashboardPage({ user, onLogout }) {
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Priority</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Description</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Due Date</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Created By</th>
+              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Created By</th> */}
+              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Assigned To</th> */}
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {tasks.map((task) => (
               <tr key={task._id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.title}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.status}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.priority}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.description || '—'}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.dueDate || '—'}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.createdBy?.username || '—'}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                <td className="px-6 py-4 text-sm text-gray-900">{task.title}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{task.status}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{task.priority}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{task.description || '—'}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{task.dueDate ? task.dueDate.split('T')[0] : '—'}</td>
+                {/* <td className="px-6 py-4 text-sm text-gray-700">{task.createdBy?.username || '—'}</td> */}
+                {/* <td className="px-6 py-4 text-sm text-gray-700">{task.assignedTo?.username || '—'}</td> */}
+                <td className="px-6 py-4 text-sm text-gray-700">
                   <button
                     onClick={() => setEditingTask(task)}
                     className="text-blue-600 hover:underline mr-2"
