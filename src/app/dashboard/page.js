@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { getTasks } from "../services/api"
+import AddTaskForm from "./addTask"
 
 export default function DashboardPage({ user, onLogout }) {
   const [tasks, setTasks] = useState([])
@@ -13,6 +14,16 @@ export default function DashboardPage({ user, onLogout }) {
     }
     fetchTasks()
   }, [])
+
+  const handleTaskAdded = (newTask) => {
+    setTasks([...tasks, newTask])
+  }
+
+  const handleDelete = async (id) => {
+    await fetch(`http://localhost:5000/api/tasks/${id}`, { method: 'DELETE' })
+    setTasks(tasks.filter(task => task._id !== id))
+  }
+  
 
   return (
     <div className="p-8">
@@ -39,6 +50,7 @@ export default function DashboardPage({ user, onLogout }) {
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Due Date</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Created By</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Assigned To</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Delete</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -51,11 +63,19 @@ export default function DashboardPage({ user, onLogout }) {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.dueDate || '—'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.createdBy?.username || '—'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.assignedTo?.username || '—'}</td>
+                <td>
+                <button onClick={() => handleDelete(task._id)} className="text-red-600 hover:underline">Delete</button>
+                </td>
+
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <br/>
+
+      <AddTaskForm onTaskAdded={handleTaskAdded} userId={user?._id}/>
     </div>
   )
 }
