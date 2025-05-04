@@ -13,7 +13,8 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
 
   useEffect(() => {
     if (editingTask) {
-      setTask(editingTask)
+      const { title, description, status, priority, dueDate } = editingTask
+      setTask({ title, description, status, priority, dueDate })
     } else {
       setTask({
         title: '',
@@ -28,11 +29,15 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    const payload = { ...task }
+
+    console.log("Submitting:", editingTask ? payload : { ...payload, createdBy: userId })
+
     if (editingTask) {
       const res = await fetch(`http://localhost:5000/api/tasks/${editingTask._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(task),
+        body: JSON.stringify(payload),
       })
       const updated = await res.json()
       onTaskUpdated(updated)
@@ -41,7 +46,7 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
       const res = await fetch(`http://localhost:5000/api/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...task, createdBy: userId }),
+        body: JSON.stringify({ ...payload, createdBy: userId }),
       })
       const newTask = await res.json()
       onTaskAdded(newTask)
@@ -91,6 +96,7 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
         >
           <option value="">Select Status</option>
           <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
           <option value="Completed">Completed</option>
         </select>
         <input

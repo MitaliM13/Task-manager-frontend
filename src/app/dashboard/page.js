@@ -1,14 +1,12 @@
 'use client'
 
 import { useEffect, useState } from "react"
-// import { getTasks } from "../services/api"
 import AddTaskForm from "./addTask"
 
 const API = "http://localhost:5000/api/tasks"
 
 export default function DashboardPage({ user, onLogout }) {
   const [tasks, setTasks] = useState([])
-//   const [filterType, setFilterType] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusfilter] = useState("")
   const [priorityFilter, setPriorityFilter] = useState("")
@@ -20,9 +18,7 @@ export default function DashboardPage({ user, onLogout }) {
   }, [])
 
   const fetchTasks = async () => {
-    let url = API
-
-    const res = await fetch(url)
+    const res = await fetch(API)
     const data = await res.json()
     setTasks(data)
   }
@@ -70,8 +66,6 @@ export default function DashboardPage({ user, onLogout }) {
         Logout
       </button>
 
-
-
       <div className="my-2">
         <input
           type="text"
@@ -117,7 +111,6 @@ export default function DashboardPage({ user, onLogout }) {
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Description</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Due Date</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Created By</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Assigned To</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
             </tr>
           </thead>
@@ -130,7 +123,6 @@ export default function DashboardPage({ user, onLogout }) {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.description || '—'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.dueDate || '—'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.createdBy?.username || '—'}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{task.assignedTo?.username || '—'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   <button
                     onClick={() => setEditingTask(task)}
