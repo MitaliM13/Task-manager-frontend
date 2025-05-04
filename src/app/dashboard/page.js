@@ -137,8 +137,8 @@ export default function DashboardPage({ user, onLogout }) {
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Priority</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Description</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Due Date</th>
-              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Created By</th> */}
-              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Assigned To</th> */}
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Created By</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Assigned To</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
             </tr>
           </thead>
@@ -150,8 +150,8 @@ export default function DashboardPage({ user, onLogout }) {
                 <td className="px-6 py-4 text-sm text-gray-700">{task.priority}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{task.description || '—'}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{task.dueDate ? task.dueDate.split('T')[0] : '—'}</td>
-                {/* <td className="px-6 py-4 text-sm text-gray-700">{task.createdBy?.username || '—'}</td> */}
-                {/* <td className="px-6 py-4 text-sm text-gray-700">{task.assignedTo?.username || '—'}</td> */}
+                <td className="px-6 py-4 text-sm text-gray-700">{task.createdBy?.username || '—'}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{task.assignedTo?.username || '—'}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">
                   <button
                     onClick={() => setEditingTask(task)}
