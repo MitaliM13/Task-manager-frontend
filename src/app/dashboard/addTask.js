@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react"
+import { useSelector } from "react-redux";
 
 export default function AddTaskForm({
   onTaskAdded,
@@ -11,6 +12,9 @@ export default function AddTaskForm({
   users,
   user 
 }) {
+
+  const {name: currentUser} = useSelector((state) => state.user)
+  // console.log(currentUser)
   const [task, setTask] = useState({
     title: '',
     description: '',

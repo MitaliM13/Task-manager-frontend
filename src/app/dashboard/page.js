@@ -1,12 +1,19 @@
 'use client'
 
 import { useEffect, useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { clearUser } from "../store/userSlice"
+
 import AddTaskForm from "./addTask"
 
 const API = "http://localhost:5000/api/tasks"
 const USERS_API = "http://localhost:5000/api/users"
 
-export default function DashboardPage({ user, onLogout }) {
+export default function DashboardPage() {
+
+  const dispatch = useDispatch()
+  const user = useSelector((state) => state.user)
+
   const [tasks, setTasks] = useState([])
   const [users, setUsers] = useState([])
   const [searchQuery, setSearchQuery] = useState("")
@@ -84,6 +91,10 @@ export default function DashboardPage({ user, onLogout }) {
     }
   }
 
+  const handleLogout = () => {
+    dispatch(clearUser())
+  }
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6 text-blue-600">
@@ -91,7 +102,7 @@ export default function DashboardPage({ user, onLogout }) {
       </h1>
 
       <button
-        onClick={onLogout}
+        onClick={handleLogout}
         className="absolute top-6 right-6 bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-xl transition-all z-10"
       >
         Logout

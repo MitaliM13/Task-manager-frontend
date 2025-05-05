@@ -1,16 +1,31 @@
 'use client';
 import { useState } from "react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUsers } from "@/app/store/userSlice";
 
 export default function LoginPage({ onLoginSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const dispatch = useDispatch()
+
   const handleLogin = async () => {
+
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-      const user = res.data.user;
+      const {user, token} = res.data;
+
+      const userData = {
+        name: user.username, 
+        email: user.email,
+        token: token
+      }
+
       localStorage.setItem('token', res.data.token);
+
+      dispatch(setUsers(userData))
+
       alert('Login Successful');
       onLoginSuccess(user);
       console.log("LoggedIn User", user);
