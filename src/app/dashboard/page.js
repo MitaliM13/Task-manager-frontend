@@ -4,9 +4,11 @@ import { useEffect, useState } from "react"
 import AddTaskForm from "./addTask"
 
 const API = "http://localhost:5000/api/tasks"
+const USERS_API = "http://localhost:5000/api/users"
 
 export default function DashboardPage({ user, onLogout }) {
   const [tasks, setTasks] = useState([])
+  const [users, setUsers] = useState([])
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
   const [priorityFilter, setPriorityFilter] = useState("")
@@ -14,7 +16,9 @@ export default function DashboardPage({ user, onLogout }) {
   const [editingTask, setEditingTask] = useState(null)
 
   useEffect(() => {
+    console.log("In page.js",user)
     fetchTasks()
+    fetchUsers()
   }, [])
 
   const fetchTasks = async () => {
@@ -27,23 +31,23 @@ export default function DashboardPage({ user, onLogout }) {
     }
   }
 
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch(USERS_API)
+      const data = await res.json()
+      setUsers(data)
+    } catch (err) {
+      console.error("Error fetching users:", err)
+    }
+  }
+
   const handleTaskAdded = (newTask) => {
     setTasks((prev) => [...prev, newTask])
   }
 
-  const handleTaskUpdated = async (updatedTask) => {
-    try {
-      const res = await fetch(`${API}/${updatedTask._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedTask),
-      })
-      const data = await res.json()
-      setTasks((prev) => prev.map((t) => (t._id === data._id ? data : t)))
-      setEditingTask(null)
-    } catch (err) {
-      console.error("Update error:", err)
-    }
+  const handleTaskUpdated = (updatedTask) => {
+    setTasks((prev) => prev.map((t) => (t._id === updatedTask._id ? updatedTask : t)))
+    setEditingTask(null)
   }
 
   const handleDelete = async (id) => {
@@ -149,9 +153,9 @@ export default function DashboardPage({ user, onLogout }) {
                 <td className="px-6 py-4 text-sm text-gray-700">{task.status}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{task.priority}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{task.description || '—'}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{task.dueDate ? task.dueDate.split('T')[0] : '—'}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{task.createdBy?.username || '—'}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{task.assignedTo?.username || '—'}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{task.dueDate?.split('T')[0] || '—'}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{task.createdBy || '—'}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{task.assignedTo || '—'}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">
                   <button
                     onClick={() => setEditingTask(task)}
@@ -178,6 +182,8 @@ export default function DashboardPage({ user, onLogout }) {
         userId={user?._id}
         editingTask={editingTask}
         setEditingTask={setEditingTask}
+        users={users}
+        user= {user}
       />
     </div>
   )

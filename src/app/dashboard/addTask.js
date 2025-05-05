@@ -2,18 +2,30 @@
 
 import { useState, useEffect } from "react"
 
-export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditingTask, onTaskUpdated }) {
+export default function AddTaskForm({
+  onTaskAdded,
+  userId,
+  editingTask,
+  setEditingTask,
+  onTaskUpdated,
+  users,
+  user 
+}) {
   const [task, setTask] = useState({
     title: '',
     description: '',
     status: 'Pending',
     priority: 'Medium',
     dueDate: '',
+    assignedTo: ''
   });
 
   useEffect(() => {
     if (editingTask) {
-      setTask(editingTask);
+      setTask({
+        ...editingTask,
+        assignedTo: editingTask.assignedTo?._id || ''
+      });
     } else {
       setTask({
         title: '',
@@ -21,6 +33,7 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
         status: 'Pending',
         priority: 'Medium',
         dueDate: '',
+        assignedTo: ''
       });
     }
   }, [editingTask]);
@@ -31,11 +44,14 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
     try {
       let res, data;
 
+      let currentUser = user?.username || 'User'
+
       if (editingTask) {
+        console.log(user)
         res = await fetch(`http://localhost:5000/api/tasks/${editingTask._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(task),
+          body: JSON.stringify({ ...task, createdBy: currentUser }),
         });
         data = await res.json();
         onTaskUpdated(data);
@@ -44,7 +60,7 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
         res = await fetch(`http://localhost:5000/api/tasks`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...task, createdBy: userId }),
+          body: JSON.stringify({ ...task, createdBy: currentUser }),
         });
         data = await res.json();
         onTaskAdded(data);
@@ -56,6 +72,8 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
         status: 'Pending',
         priority: 'Medium',
         dueDate: '',
+        createdBy: '',
+        assignedTo: ''
       });
 
     } catch (err) {
@@ -106,6 +124,18 @@ export default function AddTaskForm({ onTaskAdded, userId, editingTask, setEditi
           onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
           className="border p-2 w-full rounded"
         />
+        <select
+          value={task.assignedTo}
+          onChange={(e) => setTask({ ...task, assignedTo: e.target.value })}
+          className="border p-2 w-full rounded"
+        >
+          <option value="">Assign to...</option>
+          {(users || []).map((u) => (
+            <option key={u._id} value={u.username}>
+              {u.username}
+            </option>
+          ))}
+        </select>
         <div className="flex gap-4">
           <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
             {editingTask ? 'Update' : 'Add'}
