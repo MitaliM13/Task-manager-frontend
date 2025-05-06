@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     name: null,
     email: null,
-    token: null
+    token: null,
+    id: null
 }
 
 const userSlice = createSlice({
@@ -11,19 +12,21 @@ const userSlice = createSlice({
     initialState,
     reducers:{
         setUsers: (state, action) => {
-            const {name, email, token} = action.payload
+            const {name, email, token , id} = action.payload
             state.name = name;
             state.email = email;
-            state.token = token
+            state.token = token;
+            state.id = id
 
             if(typeof window !== 'undefined'){
-                localStorage.setItem('user', JSON.stringify({name,email, token}))
+                localStorage.setItem('user', JSON.stringify({name,email, token, id}))
             }
         },
         clearUser: (state) => {
             state.name = null;
             state.email = null;
             state.token = null;
+            state.id = null;
             if(typeof window !== 'undefined'){
                 localStorage.removeItem('user')
             }
@@ -35,6 +38,7 @@ const userSlice = createSlice({
                     state.name = user.name;
                     state.email = user.email;
                     state.token = user.token;
+                    state.id = user.id;
                 }
             }
         }

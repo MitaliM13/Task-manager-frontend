@@ -98,7 +98,7 @@ export default function DashboardPage() {
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6 text-blue-600">
-        Welcome To Dashboard, {user?.username || 'User'}!!
+        Welcome To Dashboard, {user?.name || 'User'}!!
       </h1>
 
       <button
@@ -165,8 +165,8 @@ export default function DashboardPage() {
                 <td className="px-6 py-4 text-sm text-gray-700">{task.priority}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{task.description || '—'}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{task.dueDate?.split('T')[0] || '—'}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{task.createdBy || '—'}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{task.assignedTo || '—'}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{task.createdBy?.username || '—'}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">{task.assignedTo?.username || '—'}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">
                   <button
                     onClick={() => setEditingTask(task)}

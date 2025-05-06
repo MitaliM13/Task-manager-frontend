@@ -19,7 +19,8 @@ export default function LoginPage({ onLoginSuccess }) {
       const userData = {
         name: user.username, 
         email: user.email,
-        token: token
+        token: token,
+        id: user.id
       }
 
       localStorage.setItem('token', res.data.token);

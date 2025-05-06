@@ -48,14 +48,20 @@ export default function AddTaskForm({
     try {
       let res, data;
 
-      let currentUser = user?.username || 'User'
+      let currentUser = user || {}
+
+      const payload = {
+        ...task,
+        createdBy: currentUser._id,
+        assignedTo: typeof task.assignedTo === 'object' ? task.assignedTo._id : task.assignedTo
+      };
 
       if (editingTask) {
         console.log(user)
         res = await fetch(`http://localhost:5000/api/tasks/${editingTask._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...task, createdBy: currentUser }),
+          body: JSON.stringify(payload),
         });
         data = await res.json();
         onTaskUpdated(data);
@@ -64,7 +70,7 @@ export default function AddTaskForm({
         res = await fetch(`http://localhost:5000/api/tasks`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...task, createdBy: currentUser }),
+          body: JSON.stringify(payload),
         });
         data = await res.json();
         onTaskAdded(data);
@@ -135,7 +141,7 @@ export default function AddTaskForm({
         >
           <option value="">Assign to...</option>
           {(users || []).map((u) => (
-            <option key={u._id} value={u.username}>
+            <option key={u._id} value={u._id}>
               {u.username}
             </option>
           ))}

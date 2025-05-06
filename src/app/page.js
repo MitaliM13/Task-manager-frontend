@@ -35,7 +35,7 @@ export default function Home() {
       <h1 className="text-3xl font-bold">Welcome to Task Manager!</h1>
       
       {isLoggedIn ? (
-        <DashboardPage user={user} />
+        <DashboardPage />
       ) : (
         !isRegistered ? (
           <>
