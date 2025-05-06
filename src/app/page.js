@@ -49,7 +49,7 @@ export default function Home() {
           </>
         ) : (
           <>
-            <LoginPage onLoginSuccess={(userData) => dispatch(setUsers(userData))} />
+            <LoginPage />
             <p>
               Don’t have an account?{' '}
               <button onClick={handleSwitch} className="text-blue-500 underline">

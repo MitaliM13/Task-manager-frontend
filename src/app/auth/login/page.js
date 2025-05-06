@@ -27,7 +27,7 @@ export default function LoginPage({ onLoginSuccess }) {
       dispatch(setUsers(userData))
 
       alert('Login Successful');
-      onLoginSuccess(user);
+      // onLoginSuccess(user);
       console.log("LoggedIn User", user);
       setEmail('');
       setPassword('');
