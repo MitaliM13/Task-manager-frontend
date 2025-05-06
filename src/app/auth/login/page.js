@@ -1,49 +1,55 @@
-'use client';
+"use client";
 import { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUsers } from "@/app/store/userSlice";
 
 export default function LoginPage({ onLoginSuccess }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
-
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-      const {user, token} = res.data;
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
+      const { user, token } = res.data;
 
       const userData = {
-        name: user.username, 
+        name: user.username,
         email: user.email,
         token: token,
-        id: user.id
-      }
+        id: user.id,
+      };
 
-      localStorage.setItem('token', res.data.token);
+      localStorage.setItem("token", res.data.token);
 
-      dispatch(setUsers(userData))
+      dispatch(setUsers(userData));
 
-      alert('Login Successful');
+      alert("Login Successful");
       // onLoginSuccess(user);
-      console.log("LoggedIn User", user);
-      setEmail('');
-      setPassword('');
+      // console.log("LoggedIn User", user);
+      setEmail("");
+      setPassword("");
     } catch (error) {
-      alert('Login Failed!');
+      alert("Login Failed!");
     }
   };
 
   return (
     <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 space-y-6 border border-gray-200">
-      <h2 className="text-2xl font-semibold text-gray-800 text-center">Welcome back</h2>
+      <h2 className="text-2xl font-semibold text-gray-800 text-center">
+        Welcome back
+      </h2>
 
       <div className="space-y-4">
         <div className="text-left">
-          <label className="block text-sm font-medium text-gray-600">Email</label>
+          <label className="block text-sm font-medium text-gray-600">
+            Email
+          </label>
           <input
             type="email"
             placeholder="Enter email"
@@ -54,7 +60,9 @@ export default function LoginPage({ onLoginSuccess }) {
         </div>
 
         <div className="text-left">
-          <label className="block text-sm font-medium text-gray-600">Password</label>
+          <label className="block text-sm font-medium text-gray-600">
+            Password
+          </label>
           <input
             type="password"
             placeholder="Enter password"

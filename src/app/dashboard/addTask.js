@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 export default function AddTaskForm({
@@ -10,34 +10,35 @@ export default function AddTaskForm({
   setEditingTask,
   onTaskUpdated,
   users,
-  user 
+  user,
+  fetchUsers,
 }) {
+  const { name: currentUser } = useSelector((state) => state.user);
 
-  const {name: currentUser} = useSelector((state) => state.user)
-  // console.log(currentUser)
   const [task, setTask] = useState({
-    title: '',
-    description: '',
-    status: 'Pending',
-    priority: 'Medium',
-    dueDate: '',
-    assignedTo: ''
+    title: "",
+    description: "",
+    status: "Pending",
+    priority: "Medium",
+    dueDate: "",
+    assignedTo: "",
   });
 
   useEffect(() => {
+    // console.log("user id is", user.id);
     if (editingTask) {
       setTask({
         ...editingTask,
-        assignedTo: editingTask.assignedTo?._id || ''
+        assignedTo: editingTask.assignedTo?._id || "",
       });
     } else {
       setTask({
-        title: '',
-        description: '',
-        status: 'Pending',
-        priority: 'Medium',
-        dueDate: '',
-        assignedTo: ''
+        title: "",
+        description: "",
+        status: "Pending",
+        priority: "Medium",
+        dueDate: "",
+        assignedTo: "",
       });
     }
   }, [editingTask]);
@@ -48,44 +49,47 @@ export default function AddTaskForm({
     try {
       let res, data;
 
-      let currentUser = user || {}
-
       const payload = {
         ...task,
-        createdBy: currentUser._id,
-        assignedTo: typeof task.assignedTo === 'object' ? task.assignedTo._id : task.assignedTo
+        createdBy: user.id,
+        assignedTo:
+          typeof task.assignedTo === "object"
+            ? task.assignedTo._id
+            : task.assignedTo,
       };
 
       if (editingTask) {
-        console.log(user)
-        res = await fetch(`http://localhost:5000/api/tasks/${editingTask._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
+        // console.log(user);
+        res = await fetch(
+          `http://localhost:5000/api/tasks/${editingTask._id}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
+        );
         data = await res.json();
         onTaskUpdated(data);
         setEditingTask(null);
       } else {
         res = await fetch(`http://localhost:5000/api/tasks`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
         data = await res.json();
         onTaskAdded(data);
       }
-
+      fetchUsers();
       setTask({
-        title: '',
-        description: '',
-        status: 'Pending',
-        priority: 'Medium',
-        dueDate: '',
-        createdBy: '',
-        assignedTo: ''
+        title: "",
+        description: "",
+        status: "Pending",
+        priority: "Medium",
+        dueDate: "",
+        createdBy: "",
+        assignedTo: "",
       });
-
     } catch (err) {
       console.error("Task submission error:", err);
     }
@@ -93,7 +97,9 @@ export default function AddTaskForm({
 
   return (
     <div className="mt-6 border p-4 rounded-xl bg-gray-100">
-      <h2 className="text-xl font-bold mb-4">{editingTask ? 'Update Task' : 'Add Task'}</h2>
+      <h2 className="text-xl font-bold mb-4">
+        {editingTask ? "Update Task" : "Add Task"}
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="text"
@@ -147,8 +153,11 @@ export default function AddTaskForm({
           ))}
         </select>
         <div className="flex gap-4">
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-            {editingTask ? 'Update' : 'Add'}
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            {editingTask ? "Update" : "Add"}
           </button>
           {editingTask && (
             <button
