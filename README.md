@@ -2,6 +2,10 @@
 
 This is the frontend for the **Task Manager App**, built using **Next.js**. It provides a clean, responsive UI that allows users to create and assign tasks, view assigned and created tasks, and log in securely.
 
+## 🌐 Live Demo
+
+🔗 [Task Manager App](https://task-manager-frontend-two-mauve.vercel.app)
+
 ## ✨ Features
 
 - ✅ User authentication
@@ -32,3 +36,4 @@ npm install
 yarn dev
 # or
 pnpm dev```
+
