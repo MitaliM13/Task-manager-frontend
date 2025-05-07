@@ -24,11 +24,11 @@ This is the frontend for the **Task Manager App**, built using **Next.js**. It p
 
 ```bash
 npm install
-
+```
 ### 2. Start deployment server
 
-npm run dev
+```npm run dev
 # or
 yarn dev
 # or
-pnpm dev
+pnpm dev```
