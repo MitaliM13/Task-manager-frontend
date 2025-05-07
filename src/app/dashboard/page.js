@@ -99,7 +99,6 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
-      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h1 className="text-3xl font-bold text-blue-600">
           Welcome, {user?.name || "User"}!
@@ -112,10 +111,8 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      {/* User Overview */}
       <UserTasks users={users} user={user} />
 
-      {/* Filters */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         <input
           type="text"
@@ -149,7 +146,6 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Action Buttons */}
       <div className="flex flex-wrap gap-4">
         <button
           onClick={handleSearch}
@@ -165,7 +161,6 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      {/* Task Table */}
       <div className="overflow-x-auto rounded-xl shadow-lg border border-gray-200">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-100 sticky top-0 z-10">
@@ -233,7 +228,6 @@ export default function DashboardPage() {
         </table>
       </div>
 
-      {/* Add / Edit Task Form */}
       <div className="mt-6">
         <AddTaskForm
           onTaskAdded={handleTaskAdded}
