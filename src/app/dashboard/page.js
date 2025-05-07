@@ -27,7 +27,6 @@ export default function DashboardPage() {
     fetchUsers();
   }, []);
 
-  // console.log("apna current user hai ..:", currentUser);
   const fetchTasks = async () => {
     try {
       const res = await fetch(API);
@@ -99,98 +98,100 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6 text-blue-600">
-        Welcome To Dashboard, {user?.name || "User"}!!
-      </h1>
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h1 className="text-3xl font-bold text-blue-600">
+          Welcome, {user?.name || "User"}!
+        </h1>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-2 rounded-lg shadow transition"
+        >
+          Logout
+        </button>
+      </div>
 
+      {/* User Overview */}
       <UserTasks users={users} user={user} />
 
-      <button
-        onClick={handleLogout}
-        className="absolute top-6 right-6 bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-xl transition-all z-10"
-      >
-        Logout
-      </button>
-
-      <div className="my-2">
+      {/* Filters */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         <input
           type="text"
           placeholder="Search tasks..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="input"
+          className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 w-full"
         />
-        <button onClick={handleSearch} className="btn ml-2">
-          Search
-        </button>
-      </div>
-
-      <div className="my-2 space-x-2">
         <select
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="input"
+          className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 w-full"
         >
           <option value="">Status</option>
           <option value="Pending">Pending</option>
           <option value="Completed">Completed</option>
         </select>
-
         <select
           onChange={(e) => setPriorityFilter(e.target.value)}
-          className="input"
+          className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 w-full"
         >
           <option value="">Priority</option>
           <option value="Low">Low</option>
           <option value="Medium">Medium</option>
           <option value="High">High</option>
         </select>
-
         <input
           type="date"
           value={dueBefore}
           onChange={(e) => setDueBefore(e.target.value)}
-          className="input"
+          className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 w-full"
         />
+      </div>
 
-        <button onClick={handleFilter} className="btn">
+      {/* Action Buttons */}
+      <div className="flex flex-wrap gap-4">
+        <button
+          onClick={handleSearch}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition"
+        >
+          Search
+        </button>
+        <button
+          onClick={handleFilter}
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition"
+        >
           Apply Filter
         </button>
       </div>
 
-      <div className="overflow-x-auto shadow-xl rounded-xl border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-300">
-          <thead className="bg-purple-100">
+      {/* Task Table */}
+      <div className="overflow-x-auto rounded-xl shadow-lg border border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-100 sticky top-0 z-10">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Title
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Priority
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Description
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Due Date
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Created By
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Assigned To
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                Actions
-              </th>
+              {[
+                "Title",
+                "Status",
+                "Priority",
+                "Description",
+                "Due Date",
+                "Created By",
+                "Assigned To",
+                "Actions",
+              ].map((heading) => (
+                <th
+                  key={heading}
+                  className="px-6 py-3 text-left text-sm font-semibold text-gray-700"
+                >
+                  {heading}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-100">
             {tasks.map((task) => (
-              <tr key={task._id}>
+              <tr key={task._id} className="hover:bg-gray-50 transition">
                 <td className="px-6 py-4 text-sm text-gray-900">
                   {task.title}
                 </td>
@@ -212,10 +213,10 @@ export default function DashboardPage() {
                 <td className="px-6 py-4 text-sm text-gray-700">
                   {task.assignedTo?.username || "—"}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-700">
+                <td className="px-6 py-4 text-sm space-x-2">
                   <button
                     onClick={() => setEditingTask(task)}
-                    className="text-blue-600 hover:underline mr-2"
+                    className="text-blue-600 hover:underline"
                   >
                     Edit
                   </button>
@@ -232,16 +233,19 @@ export default function DashboardPage() {
         </table>
       </div>
 
-      <AddTaskForm
-        onTaskAdded={handleTaskAdded}
-        fetchUsers={fetchUsers}
-        onTaskUpdated={handleTaskUpdated}
-        userId={user?._id}
-        editingTask={editingTask}
-        setEditingTask={setEditingTask}
-        users={users}
-        user={user}
-      />
+      {/* Add / Edit Task Form */}
+      <div className="mt-6">
+        <AddTaskForm
+          onTaskAdded={handleTaskAdded}
+          fetchUsers={fetchUsers}
+          onTaskUpdated={handleTaskUpdated}
+          userId={user?._id}
+          editingTask={editingTask}
+          setEditingTask={setEditingTask}
+          users={users}
+          user={user}
+        />
+      </div>
     </div>
   );
 }
